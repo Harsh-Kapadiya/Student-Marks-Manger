@@ -32,7 +32,7 @@ int main(){
         
     // first choice to enter the details about the student
         if(choice == 1){
-            cout << "Enter the number of student you have to add: ";
+            cout << "Enter the total number of student of the class: ";
             cin >>numberofstudent;
             for(int i=0; i < numberofstudent; i++){
                 cout << "Roll number: "<< rollno + i << endl;
