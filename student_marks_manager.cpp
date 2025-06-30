@@ -1,125 +1,165 @@
-// here i am making an student marks manager using vector
 #include <iostream>
 #include <string>
 #include <vector>
 #include <fstream>
 using namespace std;
 
-int main(){
-
-    int studentmark; // used to enter the student marks
-    int choice;   // choice which i have to choose
-    int studentnumber;  //used in the first condition so that i can check i enter all the student that i have to enter 
-    string studentname; // to enter the student name
-    int numberofstudent;
-    int rollno = 1;  // roll number of the student 
+int main() {
+    int choice;
+    string studentname;
+    int studentmark;
+    int rollno = 1;
 
     vector<string> name;
     vector<int> marks;
 
-    // this loop used for the multiple choice entering 
-    for(int i=1; ; i++){
-        cout << "===== Student Marks Manager =====" << endl;
-        cout << "1. Add Student" << endl;  
-        cout << "2. Display All Students" << endl;
-        cout << "3. Search Student" << endl;
-        cout << "4. Update Marks" << endl;
-        cout << "5. Delete Student" << endl;
-        cout << "6. Exit" << endl;
-        cout << "=================================" << endl; 
+    //Load Existing or Create Sample Students
+    ifstream infile("students.txt");
+    if (infile.is_open()) {
+        string tempName;
+        int tempMarks;
+        while (infile >> tempName >> tempMarks) {
+            name.push_back(tempName);
+            marks.push_back(tempMarks);
+        }
+        infile.close();
+    }
+
+    //Print All Loaded Data on Startup
+    cout << "\n========== Initial Student List ==========\n";
+    for (int i = 0; i < name.size(); i++) {
+        cout << "Roll No: " << i + 1 << " | Name: " << name[i] << " | Marks: " << marks[i] << endl;
+    }
+    cout << "==========================================\n\n";
+
+    // ====== Menu Starts Here ======
+    while (true) {
+        cout << "\n===== Student Marks Manager =====\n";
+        cout << "1. Add Student\n";
+        cout << "2. Display All Students\n";
+        cout << "3. Search Student\n";
+        cout << "4. Update Marks\n";
+        cout << "5. Delete Student\n";
+        cout << "6. Exit\n";
+        cout << "=================================\n";
         cout << "Enter your choice: ";
         cin >> choice;
-        
-    // first choice to enter the details about the student
-        if(choice == 1){
-            cout << "Enter the total number of student of the class: ";
-            cin >>numberofstudent;
-            for(int i=0; i < numberofstudent; i++){
-                cout << "Roll number: "<< rollno + i << endl;
+
+        // 1. Add Student
+        if (choice == 1) {
+            int numberofstudent;
+            cout << "Enter the total number of students you want to add: ";
+            cin >> numberofstudent;
+
+            for (int i = 0; i < numberofstudent; i++) {
+                cout << "Roll number: " << name.size() + 1 << endl;
                 cout << "Enter the student name: ";
                 cin >> studentname;
                 name.push_back(studentname);
+
                 cout << "Enter the total marks of the student: ";
                 cin >> studentmark;
                 marks.push_back(studentmark);
             }
-            cout << "All the entered data are stored"<<endl;;
-        }
-    
-    // second choice to display all the the details of the both the vector
-        else if(choice == 2){
-            if (name.empty() && marks.empty()){
-                cout << "No Student details found" << endl << endl << endl;
+
+            // Write updated data to file
+            ofstream outfile("students.txt");
+            for (int i = 0; i < name.size(); i++) {
+                outfile << name[i] << " " << marks[i] << endl;
             }
-            else{
-                cout << "Student details are: " <<endl;
-                for (int i = 0; i < name.size(); i++){
-                    cout << "Roll number: "<< rollno + i << endl;
-                    cout << "Student name: ";
-                    cout << name[i] << endl;
-                    cout << "student marks: ";
-                    cout << marks[i] << endl << endl;
+            outfile.close();
+
+            cout << "All data has been saved successfully.\n";
+        }
+
+        // 2. Display All Students
+        else if (choice == 2) {
+            if (name.empty()) {
+                cout << "No Student details found.\n";
+            } else {
+                cout << "\nStudent details:\n";
+                for (int i = 0; i < name.size(); i++) {
+                    cout << "Roll No: " << i + 1 << endl;
+                    cout << "Name   : " << name[i] << endl;
+                    cout << "Marks  : " << marks[i] << "\n\n";
                 }
             }
         }
 
-    // third choice to search for the student
-        else if(choice == 3){
-            if (name.empty() && marks.empty()){
-                cout << "No Student details found" << endl << endl << endl;
-            }
-            else{
-                cout << "Enter the roll number of the student you want to update the marks: ";
-                cin >> rollno;
-                cout << "Student detilas are: " << endl; 
-                cout << "Name: " << name[rollno - 1] << endl;
-                cout << "Marks: " << marks[rollno-1] << endl;
+        // 3. Search Student by Roll No
+        else if (choice == 3) {
+            int searchRoll;
+            cout << "Enter the roll number to search: ";
+            cin >> searchRoll;
 
-
-            }
-        }
-
-    // 4th choice to update the student marks
-        else if(choice == 4){
-            int updateroll;
-            if (name.empty() && marks.empty()){
-                cout << "No Student details found" << endl << endl << endl;
-            }
-            else{
-                cout << "Enter the roll number of the student you want to update the marks: ";
-                cin >> rollno;
-                cout << "Student detilas are: " << endl; 
-                cout << "Name: " << name[rollno - 1] << endl;
-                cout << "Marks: " << marks[rollno-1] << endl;
-                cout << "Enter the updated marks: " ;
-                int newmarks;
-                cin >> newmarks;
-                marks[rollno-1] = newmarks;
-                cout << "Marks updated successfully";
+            if (searchRoll <= 0 || searchRoll > name.size()) {
+                cout << "Invalid Roll Number!\n";
+            } else {
+                cout << "Student details:\n";
+                cout << "Name  : " << name[searchRoll - 1] << endl;
+                cout << "Marks : " << marks[searchRoll - 1] << endl;
             }
         }
 
-    // fith delet the student details
-        else if(choice == 5){
-            int dsr;
-            cout << "Enter the roll number of the student you want to delet the data: ";
-            cin >> dsr;
-            name.erase(name.begin()+(rollno+1));
-            marks.erase(marks.begin()+(rollno+1));
-            cout << "Student data delected successfully";
-        }   
-        
+        // 4. Update Student Marks
+        else if (choice == 4) {
+            int updateRoll;
+            cout << "Enter the roll number to update marks: ";
+            cin >> updateRoll;
 
-    //choice 6 is for exit from the code
-        else if (choice ==6){
+            if (updateRoll <= 0 || updateRoll > name.size()) {
+                cout << "Invalid Roll Number!\n";
+            } else {
+                cout << "Current Marks of " << name[updateRoll - 1] << ": " << marks[updateRoll - 1] << endl;
+                cout << "Enter the new marks: ";
+                cin >> studentmark;
+                marks[updateRoll - 1] = studentmark;
+
+                // Update file
+                ofstream outfile("students.txt");
+                for (int i = 0; i < name.size(); i++) {
+                    outfile << name[i] << " " << marks[i] << endl;
+                }
+                outfile.close();
+
+                cout << "Marks updated successfully.\n";
+            }
+        }
+
+        // 5. Delete Student
+        else if (choice == 5) {
+            int delRoll;
+            cout << "Enter the roll number to delete student data: ";
+            cin >> delRoll;
+
+            if (delRoll <= 0 || delRoll > name.size()) {
+                cout << "Invalid Roll Number!\n";
+            } else {
+                name.erase(name.begin() + delRoll - 1);
+                marks.erase(marks.begin() + delRoll - 1);
+
+                // Update file
+                ofstream outfile("students.txt");
+                for (int i = 0; i < name.size(); i++) {
+                    outfile << name[i] << " " << marks[i] << endl;
+                }
+                outfile.close();
+
+                cout << "Student data deleted successfully.\n";
+            }
+        }
+
+        // 6. Exit
+        else if (choice == 6) {
+            cout << "Exiting the program.\n";
             break;
-        }   
+        }
 
-    // show when any other number is inputed
-        else{
-            cout << "Please Enter a valid choice";
+        // Invalid choice
+        else {
+            cout << "Invalid choice! Please try again.\n";
         }
     }
-    
+
     return 0;
 }
